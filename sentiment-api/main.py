@@ -15,31 +15,19 @@ app.add_middleware(
 class SentimentRequest(BaseModel):
     sentences: list[str]
 
-def classify(text: str):
-    text = text.lower()
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-    positive = [
-        "love","great","good","excellent","awesome","amazing",
-        "fantastic","wonderful","best","happy","perfect","nice",
-        "recommend","thanks","thank you","helpful","useful",
-        "success","successful","enjoy","liked"
-    ]
+analyzer = SentimentIntensityAnalyzer()
 
-    negative = [
-        "bad","terrible","awful","hate","worst","horrible",
-        "sad","poor","problem","issue","broken","bug",
-        "error","failed","failure","annoying","disappointing"
-    ]
+def classify(text):
+    score = analyzer.polarity_scores(text)["compound"]
 
-    for word in positive:
-        if word in text:
-            return "happy"
-
-    for word in negative:
-        if word in text:
-            return "sad"
-
-    return "neutral"
+    if score > 0.05:
+        return "happy"
+    elif score < -0.05:
+        return "sad"
+    else:
+        return "neutral"
     
 @app.post("/sentiment")
 def sentiment(req: SentimentRequest):
