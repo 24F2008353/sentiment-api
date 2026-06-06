@@ -15,19 +15,20 @@ app.add_middleware(
 class SentimentRequest(BaseModel):
     sentences: list[str]
 
-
 positive_words = {
-    "love", "great", "good", "excellent", "awesome",
-    "happy", "wonderful", "amazing", "fantastic", "best"
+    "love","great","good","excellent","awesome","happy",
+    "wonderful","amazing","fantastic","best","nice",
+    "brilliant","perfect","enjoy","like"
 }
 
 negative_words = {
-    "bad", "terrible", "awful", "hate", "sad",
-    "worst", "horrible", "poor", "angry", "disappointing"
+    "bad","terrible","awful","hate","sad",
+    "worst","horrible","poor","angry",
+    "disappointing","disappointed","useless",
+    "boring","annoying"
 }
 
-
-def classify(text: str) -> str:
+def classify(text: str):
     text = text.lower()
 
     pos = sum(word in text for word in positive_words)
@@ -37,23 +38,24 @@ def classify(text: str) -> str:
         return "happy"
     elif neg > pos:
         return "sad"
-    else:
-        return "neutral"
-
+    return "neutral"
 
 @app.post("/sentiment")
 def sentiment(req: SentimentRequest):
     return {
         "results": [
             {
-                "sentence": sentence,
-                "sentiment": classify(sentence)
+                "sentence": s,
+                "sentiment": classify(s)
             }
-            for sentence in req.sentences
+            for s in req.sentences
         ]
     }
-
 
 @app.get("/")
 def root():
     return {"status": "ok"}
+
+@app.head("/")
+def root_head():
+    return {}
