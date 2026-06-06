@@ -15,19 +15,32 @@ app.add_middleware(
 class SentimentRequest(BaseModel):
     sentences: list[str]
 
-positive_words = {
-    "love","great","good","excellent","awesome","happy",
-    "wonderful","amazing","fantastic","best","nice",
-    "brilliant","perfect","enjoy","like"
-}
+def classify(text: str):
+    t = text.lower()
 
-negative_words = {
-    "bad","terrible","awful","hate","sad",
-    "worst","horrible","poor","angry",
-    "disappointing","disappointed","useless",
-    "boring","annoying"
-}
+    positive_words = [
+        "love","like","good","great","excellent","awesome","amazing",
+        "fantastic","wonderful","best","happy","brilliant","perfect",
+        "nice","super","outstanding","incredible","beautiful",
+        "enjoy","recommend","favorite","win","cool","fun"
+    ]
 
+    negative_words = [
+        "bad","terrible","awful","hate","sad","worst","horrible",
+        "poor","angry","disappointing","failure","failed","useless",
+        "boring","annoying","problem","issue","broken","bug"
+    ]
+
+    pos = sum(1 for w in positive_words if w in t)
+    neg = sum(1 for w in negative_words if w in t)
+
+    if pos > neg:
+        return "happy"
+    elif neg > pos:
+        return "sad"
+    else:
+        return "neutral"
+        
 def classify(text: str):
     text = text.lower()
 
