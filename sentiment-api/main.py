@@ -18,31 +18,29 @@ class SentimentRequest(BaseModel):
 def classify(text: str):
     text = text.lower()
 
-    positive_words = [
-        "love","like","good","great","excellent","awesome","amazing",
-        "fantastic","wonderful","best","happy","brilliant","perfect",
-        "nice","super","outstanding","incredible","beautiful",
-        "enjoy","recommend","favorite","favourite","win","winning",
-        "cool","fun","positive","success","successful","pleased"
+    positive = [
+        "love","great","good","excellent","awesome","amazing",
+        "fantastic","wonderful","best","happy","perfect","nice",
+        "recommend","thanks","thank you","helpful","useful",
+        "success","successful","enjoy","liked"
     ]
 
-    negative_words = [
-        "bad","terrible","awful","hate","sad","worst","horrible",
-        "poor","angry","disappointing","failure","failed","useless",
-        "boring","annoying","problem","issue","broken","bug",
-        "negative","frustrating","unhappy","disaster"
+    negative = [
+        "bad","terrible","awful","hate","worst","horrible",
+        "sad","poor","problem","issue","broken","bug",
+        "error","failed","failure","annoying","disappointing"
     ]
 
-    pos = sum(1 for w in positive_words if w in text)
-    neg = sum(1 for w in negative_words if w in text)
+    for word in positive:
+        if word in text:
+            return "happy"
 
-    if pos > neg:
-        return "happy"
-    elif neg > pos:
-        return "sad"
-    else:
-        return "neutral"
+    for word in negative:
+        if word in text:
+            return "sad"
 
+    return "neutral"
+    
 @app.post("/sentiment")
 def sentiment(req: SentimentRequest):
     return {
